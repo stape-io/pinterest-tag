@@ -422,6 +422,7 @@ const sha256Sync = require('sha256Sync');
 const getRequestHeader = require('getRequestHeader');
 const getType = require('getType');
 const makeString = require('makeString');
+const makeInteger = require('makeInteger');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -569,9 +570,9 @@ function hashData(key, value) {
     value = makeString(value).trim().toLowerCase();
 
     if (key === 'ph') {
-        value = value.replaceAll('+', '');
+        value = value.split(' ').join('').split('-').join('').split('(').join('').split(')').join('').split('+').join('');
     } else if (key === 'ct') {
-        value = value.replaceAll(' ', '');
+        value = value.split(' ').join('');
     }
 
     return sha256Sync(value, {outputEncoding: 'hex'});
@@ -581,7 +582,16 @@ function hashDataIfNeeded(mappedData) {
     if (mappedData.user_data) {
         for (let key in mappedData.user_data) {
             if (key === 'em' || key === 'ph' || key === 'ge' || key === 'db' || key === 'ln' || key === 'fn' || key === 'ct' || key === 'st' || key === 'zp' || key === 'country' || key === 'hashed_maids') {
-                mappedData.user_data[key] = hashData(key, mappedData.user_data[key]);
+                let hashedValue = hashData(key, mappedData.user_data[key]);
+                let type = getType(hashedValue);
+
+                if (type !== 'undefined' && hashedValue !== 'undefined') {
+                    if (type !== 'object' && type !== 'array') {
+                        hashedValue = [hashedValue];
+                    }
+
+                    mappedData.user_data[key] = hashedValue;
+                }
             }
         }
     }
@@ -653,8 +663,8 @@ function addEcommerceData(eventData, mappedData) {
 
             if (d.item_id) contentIds.push(d.item_id);
             if (d.quantity) {
-                content.quantity = d.quantity;
-                numItems += d.quantity;
+                content.quantity = makeInteger(d.quantity);
+                numItems += makeInteger(d.quantity);
             }
 
             if (d.price) {
@@ -674,7 +684,7 @@ function addEcommerceData(eventData, mappedData) {
     else if (currencyFromItems) mappedData.custom_data.currency = currencyFromItems;
 
     if (contentIds.length) mappedData.custom_data.content_ids = contentIds;
-    if (numItems) mappedData.custom_data.num_items = numItems;
+    if (numItems) mappedData.custom_data.num_items = makeInteger(numItems);
 
     if (eventData.search_term) mappedData.custom_data.search_string = eventData.search_term;
     if (eventData.transaction_id) mappedData.custom_data.order_id = eventData.transaction_id;
