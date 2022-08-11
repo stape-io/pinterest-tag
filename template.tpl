@@ -679,6 +679,7 @@ function addEcommerceData(eventData, mappedData) {
     if (eventData['x-ga-mp1-ev']) mappedData.custom_data.value = eventData['x-ga-mp1-ev'];
     else if (eventData['x-ga-mp1-tr']) mappedData.custom_data.value = eventData['x-ga-mp1-tr'];
     else if (eventData.value) mappedData.custom_data.value = eventData.value;
+    else if (valueFromItems) mappedData.custom_data.value = valueFromItems;
 
     if (eventData.currency) mappedData.custom_data.currency = eventData.currency;
     else if (currencyFromItems) mappedData.custom_data.currency = currencyFromItems;
