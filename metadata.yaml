@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 5ec0ee82656548f8cb748c6b56648acdfe3b00d3
+    changeNotes: Value parse fixes.
   - sha: 78d2bcad97cdf24c0c482b28ee60491d8df2eb1b
     changeNotes: User data parse fixes.
   - sha: 9a73dcc332f0942f916f39b6cab8e64a31b40e80
