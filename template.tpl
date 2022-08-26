@@ -484,6 +484,7 @@ function getEventName(eventData, data) {
             'generate_lead': 'lead',
             'purchase': 'checkout',
             'search': 'search',
+            'view_item_list': 'view_category',
             'view_item': 'custom',
 
             'contact': 'lead',
