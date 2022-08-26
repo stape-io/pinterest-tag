@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 2e1c94c3af492077cb7063d03026d575e5d85453
+    changeNotes: Add view category mapping.
   - sha: 5ec0ee82656548f8cb748c6b56648acdfe3b00d3
     changeNotes: Value parse fixes.
   - sha: 78d2bcad97cdf24c0c482b28ee60491d8df2eb1b
