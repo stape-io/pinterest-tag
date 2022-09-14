@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: ddbf4fc8bcf0aa20f0b0f170798697e58eca5d91
+    changeNotes: Make advertiser_id integer.
   - sha: 2e1c94c3af492077cb7063d03026d575e5d85453
     changeNotes: Add view category mapping.
   - sha: 5ec0ee82656548f8cb748c6b56648acdfe3b00d3
