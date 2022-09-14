@@ -518,7 +518,7 @@ function mapEvent(eventData, data) {
 
     let mappedData = {
         event_name: eventName,
-        advertiser_id: data.pixelId,
+        advertiser_id: makeInteger(data.pixelId),
         action_source: 'web',
         event_source_url: eventData.page_location,
         event_time: Math.round(getTimestampMillis() / 1000),
