@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 0d8719945ae4248c79754b2206618d11db440ffc
+    changeNotes: Api v5 support.
   - sha: ddbf4fc8bcf0aa20f0b0f170798697e58eca5d91
     changeNotes: Make advertiser_id integer.
   - sha: 2e1c94c3af492077cb7063d03026d575e5d85453
