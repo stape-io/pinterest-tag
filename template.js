@@ -16,7 +16,8 @@ const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 
 const eventData = getAllEventData();
 
-let postUrl = 'https://ct.pinterest.com/events/v3/';
+let postUrl =
+  'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
 const mappedEventData = mapEvent(eventData, data);
 const postBody = { data: [mappedEventData] };
 
@@ -61,7 +62,13 @@ sendHttpRequest(
       data.gtmOnFailure();
     }
   },
-  { headers: { 'content-type': 'application/json' }, method: 'POST' },
+  {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: 'Bearer ' + data.apiAccessToken,
+    },
+    method: 'POST',
+  },
   JSON.stringify(postBody)
 );
 
@@ -116,7 +123,6 @@ function mapEvent(eventData, data) {
 
   let mappedData = {
     event_name: eventName,
-    advertiser_id: makeInteger(data.pixelId),
     action_source: 'web',
     event_source_url: eventData.page_location,
     event_time: Math.round(getTimestampMillis() / 1000),
@@ -276,7 +282,7 @@ function addEcommerceData(eventData, mappedData) {
   let contentIds = [];
 
   if (eventData.items && eventData.items[0]) {
-    mappedData.custom_data.contents = {};
+    mappedData.custom_data.contents = [];
     currencyFromItems = eventData.items[0].currency;
 
     eventData.items.forEach((d, i) => {
@@ -289,7 +295,7 @@ function addEcommerceData(eventData, mappedData) {
       }
 
       if (d.price) {
-        content.item_price = d.price;
+        content.item_price = makeString(d.price);
         valueFromItems += d.quantity ? d.quantity * d.price : d.price;
       }
 
@@ -301,8 +307,10 @@ function addEcommerceData(eventData, mappedData) {
     mappedData.custom_data.value = eventData['x-ga-mp1-ev'];
   else if (eventData['x-ga-mp1-tr'])
     mappedData.custom_data.value = eventData['x-ga-mp1-tr'];
-  else if (eventData.value) mappedData.custom_data.value = eventData.value;
-  else if (valueFromItems) mappedData.custom_data.value = valueFromItems;
+  else if (eventData.value)
+    mappedData.custom_data.value = makeString(eventData.value);
+  else if (valueFromItems)
+    mappedData.custom_data.value = makeString(valueFromItems);
 
   if (eventData.currency) mappedData.custom_data.currency = eventData.currency;
   else if (currencyFromItems)
