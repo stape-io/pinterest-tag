@@ -114,15 +114,34 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "pixelId",
+    "name": "advertiserId",
     "displayName": "Pinterest Advertiser ID",
     "simpleValueType": true,
     "valueValidators": [
       {
         "type": "NON_EMPTY"
+      },
+      {
+        "type": "REGEX",
+        "args": [
+          "549\\d{9}"
+        ],
+        "errorMessage": "This value should match 549XXXXXXXXX"
       }
     ],
     "help": "You can find it by logging to the Pinterest account that owns your advertiser account, then go to \"ads.pinterest.com\". In the top navigation section, click on \"Viewing: \" and the advertiser id will be the number underneath the ad account name in the drop down menu. If your Pinterest account has multiple ad accounts, make sure you are choosing the proper one that you want to use for owning your API conversion events. Another way to confirm your advertiser id is to navigate to Ads \u003e Overview and look for the id in the URL path. It will look like: \"ads.pinterest.com/advertiser/ADVERTISER_ID/?...\"."
+  },
+  {
+    "type": "TEXT",
+    "name": "apiAccessToken",
+    "displayName": "API Access Token",
+    "simpleValueType": true,
+    "help": "To use the Pinterest Conversions API, you need an access token.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
   },
   {
     "type": "CHECKBOX",
@@ -429,7 +448,8 @@ const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 
 const eventData = getAllEventData();
 
-let postUrl = 'https://ct.pinterest.com/events/v3/';
+let postUrl =
+  'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
 const mappedEventData = mapEvent(eventData, data);
 const postBody = { data: [mappedEventData] };
 
@@ -474,7 +494,13 @@ sendHttpRequest(
       data.gtmOnFailure();
     }
   },
-  { headers: { 'content-type': 'application/json' }, method: 'POST' },
+  {
+    headers: {
+      'content-type': 'application/json',
+      Authorization: 'Bearer ' + data.apiAccessToken,
+    },
+    method: 'POST',
+  },
   JSON.stringify(postBody)
 );
 
@@ -529,7 +555,6 @@ function mapEvent(eventData, data) {
 
   let mappedData = {
     event_name: eventName,
-    advertiser_id: makeInteger(data.pixelId),
     action_source: 'web',
     event_source_url: eventData.page_location,
     event_time: Math.round(getTimestampMillis() / 1000),
@@ -689,7 +714,7 @@ function addEcommerceData(eventData, mappedData) {
   let contentIds = [];
 
   if (eventData.items && eventData.items[0]) {
-    mappedData.custom_data.contents = {};
+    mappedData.custom_data.contents = [];
     currencyFromItems = eventData.items[0].currency;
 
     eventData.items.forEach((d, i) => {
@@ -702,7 +727,7 @@ function addEcommerceData(eventData, mappedData) {
       }
 
       if (d.price) {
-        content.item_price = d.price;
+        content.item_price = makeString(d.price);
         valueFromItems += d.quantity ? d.quantity * d.price : d.price;
       }
 
@@ -714,8 +739,10 @@ function addEcommerceData(eventData, mappedData) {
     mappedData.custom_data.value = eventData['x-ga-mp1-ev'];
   else if (eventData['x-ga-mp1-tr'])
     mappedData.custom_data.value = eventData['x-ga-mp1-tr'];
-  else if (eventData.value) mappedData.custom_data.value = eventData.value;
-  else if (valueFromItems) mappedData.custom_data.value = valueFromItems;
+  else if (eventData.value)
+    mappedData.custom_data.value = makeString(eventData.value);
+  else if (valueFromItems)
+    mappedData.custom_data.value = makeString(valueFromItems);
 
   if (eventData.currency) mappedData.custom_data.currency = eventData.currency;
   else if (currencyFromItems)
@@ -878,7 +905,7 @@ ___SERVER_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://ct.pinterest.com/"
+                "string": "https://api.pinterest.com/"
               }
             ]
           }
