@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: d8025f3a98bf34f3fb5d3803af8c17ba6077b8e7
+    changeNotes: added missing hashing for external_id.
   - sha: a66f874d174a18c4ba82344b654e58759c3d807c
     changeNotes: Fix for addUserData function and allow to override external_id.
   - sha: 0d8719945ae4248c79754b2206618d11db440ffc
