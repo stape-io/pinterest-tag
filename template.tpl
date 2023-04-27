@@ -643,7 +643,8 @@ function hashDataIfNeeded(mappedData) {
         key === 'st' ||
         key === 'zp' ||
         key === 'country' ||
-        key === 'hashed_maids'
+        key === 'hashed_maids' ||
+        key === 'external_id'
       ) {
         let hashedValue = hashData(key, mappedData.user_data[key]);
         let type = getType(hashedValue);
