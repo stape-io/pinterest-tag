@@ -123,15 +123,20 @@ function mapEvent(eventData, data) {
 
   let mappedData = {
     event_name: eventName,
-    action_source: 'web',
-    event_source_url: eventData.page_location,
+    action_source: data.actionSource || 'web',
+    partner_name: 'ss-stape',
     event_time: Math.round(getTimestampMillis() / 1000),
     custom_data: {},
-    user_data: {
+    user_data: {},
+  };
+
+  if (mappedData.action_source === 'web') {
+    mappedData.event_source_url = eventData.page_location;
+    mappedData.user_data = {
       client_ip_address: eventData.ip_override,
       client_user_agent: eventData.user_agent,
-    },
-  };
+    };
+  }
 
   mappedData = addServerEventData(eventData, data, mappedData);
   mappedData = addUserData(eventData, mappedData);
@@ -325,6 +330,8 @@ function addEcommerceData(eventData, mappedData) {
   if (eventData.transaction_id)
     mappedData.custom_data.order_id = eventData.transaction_id;
 
+  if (eventData.opt_out_type) mappedData.custom_data.opt_out_type = eventData.opt_out_type;
+
   return mappedData;
 }
 
@@ -392,6 +399,8 @@ function addUserData(eventData, mappedData) {
 
   if (eventData.gender) mappedData.user_data.ge = eventData.gender;
   if (eventData.db) mappedData.user_data.db = eventData.db;
+  if (eventData.hashed_maids) mappedData.user_data.hashed_maids = eventData.hashed_maids;
+  if (eventData.click_id) mappedData.user_data.click_id = eventData.click_id;
 
   return mappedData;
 }
