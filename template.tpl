@@ -176,6 +176,13 @@ ___TEMPLATE_PARAMETERS___
     "help": "The events will not be recorded but the API will still return the same response messages. Use this mode to verify your requests are working and your events are constructed correctly."
   },
   {
+    "type": "CHECKBOX",
+    "name": "useOptimisticScenario",
+    "checkboxText": "Use Optimistic Scenario",
+    "simpleValueType": true,
+    "help": "The tag will call gtmOnSuccess() without waiting for a response from the API. This will speed up sGTM response time however your tag will always return the status fired successfully even in case it is not."
+  },
+  {
     "displayName": "Server Event Data Override",
     "name": "serverEventDataListGroup",
     "groupStyle": "ZIPPY_CLOSED",
@@ -521,10 +528,12 @@ sendHttpRequest(
       );
     }
 
-    if (statusCode >= 200 && statusCode < 300) {
-      data.gtmOnSuccess();
-    } else {
-      data.gtmOnFailure();
+    if (!data.useOptimisticScenario) {
+      if (statusCode >= 200 && statusCode < 300) {
+        data.gtmOnSuccess();
+      } else {
+        data.gtmOnFailure();
+      }
     }
   },
   {
@@ -537,6 +546,9 @@ sendHttpRequest(
   JSON.stringify(postBody)
 );
 
+if (data.useOptimisticScenario) {
+  data.gtmOnSuccess();
+}
 function getEventName(eventData, data) {
   if (data.eventType === 'inherit') {
     let eventName = eventData.event_name;

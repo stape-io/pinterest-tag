@@ -56,10 +56,12 @@ sendHttpRequest(
       );
     }
 
-    if (statusCode >= 200 && statusCode < 300) {
-      data.gtmOnSuccess();
-    } else {
-      data.gtmOnFailure();
+    if (!data.useOptimisticScenario) {
+      if (statusCode >= 200 && statusCode < 300) {
+        data.gtmOnSuccess();
+      } else {
+        data.gtmOnFailure();
+      }
     }
   },
   {
@@ -72,6 +74,9 @@ sendHttpRequest(
   JSON.stringify(postBody)
 );
 
+if (data.useOptimisticScenario) {
+  data.gtmOnSuccess();
+}
 function getEventName(eventData, data) {
   if (data.eventType === 'inherit') {
     let eventName = eventData.event_name;
