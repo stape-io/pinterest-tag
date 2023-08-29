@@ -10,6 +10,9 @@ const getRequestHeader = require('getRequestHeader');
 const getType = require('getType');
 const makeString = require('makeString');
 const makeInteger = require('makeInteger');
+const getRequestQueryParameter = require('getRequestQueryParameter');
+const setCookie = require('setCookie');
+const getCookieValues = require('getCookieValues');
 
 const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
@@ -18,6 +21,7 @@ const eventData = getAllEventData();
 
 let postUrl =
   'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
+setClickIdCookieIfNeeded();
 const mappedEventData = mapEvent(eventData, data);
 const postBody = { data: [mappedEventData] };
 
@@ -335,7 +339,8 @@ function addEcommerceData(eventData, mappedData) {
   if (eventData.transaction_id)
     mappedData.custom_data.order_id = eventData.transaction_id;
 
-  if (eventData.opt_out_type) mappedData.custom_data.opt_out_type = eventData.opt_out_type;
+  if (eventData.opt_out_type)
+    mappedData.custom_data.opt_out_type = eventData.opt_out_type;
 
   return mappedData;
 }
@@ -404,8 +409,10 @@ function addUserData(eventData, mappedData) {
 
   if (eventData.gender) mappedData.user_data.ge = eventData.gender;
   if (eventData.db) mappedData.user_data.db = eventData.db;
-  if (eventData.hashed_maids) mappedData.user_data.hashed_maids = eventData.hashed_maids;
-  if (eventData.click_id) mappedData.user_data.click_id = eventData.click_id;
+  if (eventData.hashed_maids)
+    mappedData.user_data.hashed_maids = eventData.hashed_maids;
+  const click_id = getCookieValues('_epik')[0] || eventData.click_id || '';
+  if (click_id) mappedData.user_data.click_id = click_id;
 
   return mappedData;
 }
@@ -438,4 +445,17 @@ function determinateIsLoggingEnabled() {
   }
 
   return data.logType === 'always';
+}
+
+function setClickIdCookieIfNeeded() {
+  const click_id = getRequestQueryParameter('epik');
+  if (click_id) {
+    setCookie('_epik', click_id, {
+      domain: 'auto',
+      path: '/',
+      secure: true,
+      httpOnly: true,
+      'max-age': 31536000, // 1 year
+    });
+  }
 }
