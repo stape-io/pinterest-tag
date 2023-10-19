@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: f8b6ab95b85ea93b39977ae0b838731caec64f15
+    changeNotes: Added named partner field.
   - sha: 55eb916b4a3578f1ec3fd9245a60f41192371c74
     changeNotes: Added epik param support.
   - sha: 7e66883cff93c6a862cea5b41a467b2633a4c605
