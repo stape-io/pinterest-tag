@@ -135,7 +135,9 @@ function mapEvent(eventData, data) {
     action_source: data.actionSource || 'web',
     partner_name: 'ss-stape',
     event_time: Math.round(getTimestampMillis() / 1000),
-    custom_data: {},
+    custom_data: {
+      np: 'ss-stape',
+    },
     user_data: {},
   };
 
