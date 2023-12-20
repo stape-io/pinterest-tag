@@ -24,7 +24,8 @@
 - Does not require Access Token. You should use only a Pinterest advertiser ID.
 - You can send event and product data.
 
-
+## Useful link:
+- https://stape.io/blog/pinterest-conversion-api 
 ## Open Source
 
 Pinterest Tag for GTM Server Side is developing and maintained by [Stape Team](https://stape.io/) under the Apache 2.0 license.
