@@ -438,6 +438,31 @@ ___TEMPLATE_PARAMETERS___
     "help": "See \u003ca href\u003d\"https://s.pinimg.com/ct/docs/conversions_api/dist/v3.html\" target\u003d\"_blank\"\u003ethis documentation\u003c/a\u003e for more details on what data parameters you can add to the call."
   },
   {
+    "type": "GROUP",
+    "name": "consentSettingsGroup",
+    "displayName": "Consent Settings",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "RADIO",
+        "name": "adStorageConsent",
+        "displayName": "",
+        "radioItems": [
+          {
+            "value": "optional",
+            "displayValue": "Send data always"
+          },
+          {
+            "value": "required",
+            "displayValue": "Send data in case marketing consent given"
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "optional"
+      }
+    ]
+  },
+  {
     "displayName": "Logs Settings",
     "name": "logsGroup",
     "groupStyle": "ZIPPY_CLOSED",
@@ -490,6 +515,10 @@ const isLoggingEnabled = determinateIsLoggingEnabled();
 const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 
 const eventData = getAllEventData();
+
+if (!isConsentGivenOrNotRequired()) {
+  return data.gtmOnSuccess();
+}
 
 let postUrl =
   'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
@@ -608,7 +637,7 @@ function mapEvent(eventData, data) {
     partner_name: 'ss-stape',
     event_time: Math.round(getTimestampMillis() / 1000),
     custom_data: {
-      np: 'ss-stape'
+      np: 'ss-stape',
     },
     user_data: {},
   };
@@ -932,6 +961,13 @@ function setClickIdCookieIfNeeded() {
       'max-age': 31536000, // 1 year
     });
   }
+}
+
+function isConsentGivenOrNotRequired() {
+  if (data.adStorageConsent !== 'required') return true;
+  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
 }
 
 

@@ -19,6 +19,10 @@ const traceId = isLoggingEnabled ? getRequestHeader('trace-id') : undefined;
 
 const eventData = getAllEventData();
 
+if (!isConsentGivenOrNotRequired()) {
+  return data.gtmOnSuccess();
+}
+
 let postUrl =
   'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
 setClickIdCookieIfNeeded();
@@ -460,4 +464,11 @@ function setClickIdCookieIfNeeded() {
       'max-age': 31536000, // 1 year
     });
   }
+}
+
+function isConsentGivenOrNotRequired() {
+  if (data.adStorageConsent !== 'required') return true;
+  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
 }
