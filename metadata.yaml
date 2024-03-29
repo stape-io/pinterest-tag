@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 6c4e5cdee91d611925f2599b37c16e85edd3b181
+    changeNotes: Consent settings section.
   - sha: f8b6ab95b85ea93b39977ae0b838731caec64f15
     changeNotes: Added named partner field.
   - sha: 55eb916b4a3578f1ec3fd9245a60f41192371c74
