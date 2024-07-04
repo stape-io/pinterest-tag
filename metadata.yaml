@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 649505c7cf37884b81b9c74346307e175ac68e52
+    changeNotes: Fix conversion value types.
   - sha: 6c4e5cdee91d611925f2599b37c16e85edd3b181
     changeNotes: Consent settings section.
   - sha: f8b6ab95b85ea93b39977ae0b838731caec64f15
