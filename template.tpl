@@ -422,6 +422,18 @@ ___TEMPLATE_PARAMETERS___
               {
                 "value": "opt_out_type",
                 "displayValue": "Opt Out Type"
+              },
+              {
+                "value": "content_name",
+                "displayValue": "Content Name"
+              },
+              {
+                "value": "content_category",
+                "displayValue": "Content Category"
+              },
+              {
+                "value": "content_brand",
+                "displayValue": "Content Brand"
               }
             ]
           },
@@ -654,6 +666,7 @@ function mapEvent(eventData, data) {
   mappedData = addUserData(eventData, mappedData);
   mappedData = addEcommerceData(eventData, mappedData);
   mappedData = overrideDataIfNeeded(data, mappedData);
+  mappedData = fixValueTypes(mappedData);
   mappedData = cleanupData(mappedData);
   mappedData = hashDataIfNeeded(mappedData);
 
@@ -844,7 +857,12 @@ function addEcommerceData(eventData, mappedData) {
 
   if (eventData.opt_out_type)
     mappedData.custom_data.opt_out_type = eventData.opt_out_type;
-
+  if (eventData.content_name)
+    mappedData.custom_data.content_name = eventData.content_name;
+  if (eventData.content_category)
+    mappedData.custom_data.content_category = eventData.content_category;
+  if (eventData.content_brand)
+    mappedData.custom_data.content_brand = eventData.content_brand;
   return mappedData;
 }
 
@@ -961,6 +979,21 @@ function setClickIdCookieIfNeeded() {
       'max-age': 31536000, // 1 year
     });
   }
+}
+
+function fixValueTypes(mappedData) {
+  const valueType = getType(mappedData.custom_data.value);
+  if (valueType === 'number') {
+    mappedData.custom_data.value = makeString(mappedData.custom_data.value);
+  }
+  if (mappedData.custom_data.contents) {
+    mappedData.custom_data.contents.forEach((content) => {
+      if (getType(content.item_price) === 'number') {
+        content.item_price = makeString(content.item_price);
+      }
+    });
+  }
+  return mappedData;
 }
 
 function isConsentGivenOrNotRequired() {
@@ -1083,6 +1116,21 @@ ___SERVER_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "trace-id"
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "headerName"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "x-ga-gcs"
                   }
                 ]
               }
