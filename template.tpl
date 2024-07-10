@@ -171,7 +171,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "CHECKBOX",
     "name": "testMode",
-    "checkboxText": "Test request",
+    "checkboxText": "Test Mode",
     "simpleValueType": true,
     "help": "The events will not be recorded but the API will still return the same response messages. Use this mode to verify your requests are working and your events are constructed correctly."
   },
