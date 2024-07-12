@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: a6b445f9182e7c92ead9a59dd3e024ee0b577645
+    changeNotes: Added common cookie support.
   - sha: bbc071dd2bc6b119e60c3ec5ed5a85e4fc7fcaca
     changeNotes: Update test mode checkbox name.
   - sha: 649505c7cf37884b81b9c74346307e175ac68e52
