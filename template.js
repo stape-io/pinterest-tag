@@ -23,6 +23,8 @@ if (!isConsentGivenOrNotRequired()) {
   return data.gtmOnSuccess();
 }
 
+const commonCookie = eventData.common_cookie || {};
+
 let postUrl =
   'https://api.pinterest.com/v5/ad_accounts/' + data.advertiserId + '/events';
 setClickIdCookieIfNeeded();
@@ -423,7 +425,11 @@ function addUserData(eventData, mappedData) {
   if (eventData.db) mappedData.user_data.db = eventData.db;
   if (eventData.hashed_maids)
     mappedData.user_data.hashed_maids = eventData.hashed_maids;
-  const click_id = getCookieValues('_epik')[0] || eventData.click_id || '';
+  const click_id =
+    getCookieValues('_epik')[0] ||
+    commonCookie._epik ||
+    eventData.click_id ||
+    '';
   if (click_id) mappedData.user_data.click_id = click_id;
 
   return mappedData;
