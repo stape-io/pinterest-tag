@@ -13,7 +13,7 @@ ___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "displayName": "Pinterest Conversion API",
+  "displayName": "Pinterest Conversion API by Stape",
   "categories": [
     "ADVERTISING",
     "ANALYTICS",

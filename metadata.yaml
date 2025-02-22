@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: 4f09aba28bee2c9217b746288f87f5bcef55ab13
+    changeNotes: Changed the tag display name.
   - sha: a6b445f9182e7c92ead9a59dd3e024ee0b577645
     changeNotes: Added common cookie support.
   - sha: bbc071dd2bc6b119e60c3ec5ed5a85e4fc7fcaca
