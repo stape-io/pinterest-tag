@@ -1,5 +1,7 @@
 homepage: "https://stape.io/"
 versions:
+  - sha: a7402a470534442a3c03064f48f62c93c2e1c71d
+    changeNotes: Fixed errors with wrong event name, updated log flow.
   - sha: 4f09aba28bee2c9217b746288f87f5bcef55ab13
     changeNotes: Changed the tag display name.
   - sha: a6b445f9182e7c92ead9a59dd3e024ee0b577645
