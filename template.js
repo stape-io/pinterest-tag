@@ -35,36 +35,28 @@ if (data.testMode) {
   postUrl = postUrl + '?test=true';
 }
 
-if (isLoggingEnabled) {
-  logToConsole(
-    JSON.stringify({
-      Name: 'Pinterest',
-      Type: 'Request',
-      TraceId: traceId,
-      EventName: mappedEventData.event_name,
-      RequestMethod: 'POST',
-      RequestUrl: postUrl,
-      RequestBody: postBody,
-    })
-  );
-}
+log({
+  Name: 'Pinterest',
+  Type: 'Request',
+  TraceId: traceId,
+  EventName: mappedEventData.event_name,
+  RequestMethod: 'POST',
+  RequestUrl: postUrl,
+  RequestBody: postBody,
+});
 
 sendHttpRequest(
   postUrl,
   (statusCode, headers, body) => {
-    if (isLoggingEnabled) {
-      logToConsole(
-        JSON.stringify({
-          Name: 'Pinterest',
-          Type: 'Response',
-          TraceId: traceId,
-          EventName: mappedEventData.event_name,
-          ResponseStatusCode: statusCode,
-          ResponseHeaders: headers,
-          ResponseBody: body,
-        })
-      );
-    }
+    log({
+      Name: 'Pinterest',
+      Type: 'Response',
+      TraceId: traceId,
+      EventName: mappedEventData.event_name,
+      ResponseStatusCode: statusCode,
+      ResponseHeaders: headers,
+      ResponseBody: body,
+    });
 
     if (!data.useOptimisticScenario) {
       if (statusCode >= 200 && statusCode < 300) {
@@ -90,7 +82,7 @@ if (data.useOptimisticScenario) {
 function getEventName(eventData, data) {
   if (data.eventType === 'inherit') {
     let eventName = eventData.event_name;
-
+    eventName = eventName.toLowerCase().trim();
     let gaToEventName = {
       page_view: 'page_visit',
       'gtm.dom': 'page_visit',
@@ -122,15 +114,12 @@ function getEventName(eventData, data) {
     };
 
     if (!gaToEventName[eventName]) {
-      return eventName;
+      return 'custom';
     }
 
     return gaToEventName[eventName];
   }
-
-  return data.eventType === 'standard'
-    ? data.eventNameStandard
-    : data.eventNameCustom;
+  return data.eventNameStandard;
 }
 
 function mapEvent(eventData, data) {
@@ -443,27 +432,33 @@ function addServerEventData(eventData, data, mappedData) {
   return mappedData;
 }
 
-function determinateIsLoggingEnabled() {
-  const containerVersion = getContainerVersion();
-  const isDebug = !!(
-    containerVersion &&
-    (containerVersion.debugMode || containerVersion.previewMode)
-  );
-
-  if (!data.logType) {
-    return isDebug;
+function log(logObject) {
+  if (isLoggingEnabled) {
+    logToConsole(JSON.stringify(logObject));
   }
-
-  if (data.logType === 'no') {
-    return false;
-  }
-
-  if (data.logType === 'debug') {
-    return isDebug;
-  }
-
-  return data.logType === 'always';
-}
+ }
+ 
+ function determinateIsLoggingEnabled() {
+    const containerVersion = getContainerVersion();
+    const isDebug = !!(
+        containerVersion &&
+        (containerVersion.debugMode || containerVersion.previewMode)
+    );
+ 
+    if (!data.logType) {
+        return isDebug;
+    }
+ 
+    if (data.logType === 'no') {
+        return false;
+    }
+ 
+    if (data.logType === 'debug') {
+        return isDebug;
+    }
+ 
+    return data.logType === 'always';
+ }
 
 function setClickIdCookieIfNeeded() {
   const click_id = getRequestQueryParameter('epik');
