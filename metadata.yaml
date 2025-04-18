@@ -1,6 +1,6 @@
 homepage: "https://stape.io/"
 versions:
-  - sha: 1897f704729b2eb4b7231f599902f1467ef9305d
+  - sha: fc3516a81d737b728e44588984d832a5521ce2a2
     changeNotes: Fix for extracting the Click ID from the incoming request.
   - sha: a7402a470534442a3c03064f48f62c93c2e1c71d
     changeNotes: Fixed errors with wrong event name, updated log flow.
