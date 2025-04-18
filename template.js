@@ -467,8 +467,9 @@ function setClickIdCookieIfNeeded() {
     setCookie('_epik', searchParams.epik, {
       domain: 'auto',
       path: '/',
+      samesite: 'Lax',
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
       'max-age': 31536000, // 1 year
     });
   }
