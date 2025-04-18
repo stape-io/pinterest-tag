@@ -1121,7 +1121,7 @@ ___SERVER_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "x-ga-gcs"
+                    "string": "referer"
                   }
                 ]
               }
