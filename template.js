@@ -10,7 +10,7 @@ const getRequestHeader = require('getRequestHeader');
 const getType = require('getType');
 const makeString = require('makeString');
 const makeInteger = require('makeInteger');
-const getRequestQueryParameter = require('getRequestQueryParameter');
+const parseUrl = require('parseUrl');
 const setCookie = require('setCookie');
 const getCookieValues = require('getCookieValues');
 
@@ -436,38 +436,40 @@ function log(logObject) {
   if (isLoggingEnabled) {
     logToConsole(JSON.stringify(logObject));
   }
- }
- 
- function determinateIsLoggingEnabled() {
-    const containerVersion = getContainerVersion();
-    const isDebug = !!(
-        containerVersion &&
-        (containerVersion.debugMode || containerVersion.previewMode)
-    );
- 
-    if (!data.logType) {
-        return isDebug;
-    }
- 
-    if (data.logType === 'no') {
-        return false;
-    }
- 
-    if (data.logType === 'debug') {
-        return isDebug;
-    }
- 
-    return data.logType === 'always';
- }
+}
+
+function determinateIsLoggingEnabled() {
+  const containerVersion = getContainerVersion();
+  const isDebug = !!(
+    containerVersion &&
+    (containerVersion.debugMode || containerVersion.previewMode)
+  );
+
+  if (!data.logType) {
+    return isDebug;
+  }
+
+  if (data.logType === 'no') {
+    return false;
+  }
+
+  if (data.logType === 'debug') {
+    return isDebug;
+  }
+
+  return data.logType === 'always';
+}
 
 function setClickIdCookieIfNeeded() {
-  const click_id = getRequestQueryParameter('epik');
-  if (click_id) {
-    setCookie('_epik', click_id, {
+  const url = eventData.page_location || getRequestHeader('referer');
+  const searchParams = parseUrl(url).searchParams;
+  if (searchParams && searchParams.epik) {
+    setCookie('_epik', searchParams.epik, {
       domain: 'auto',
       path: '/',
+      samesite: 'Lax',
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
       'max-age': 31536000, // 1 year
     });
   }
